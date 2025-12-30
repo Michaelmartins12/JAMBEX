@@ -309,7 +309,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: calc(var(--spacing-lg) * -1);
+  /* margin-top: calc(var(--spacing-lg) * -1); Removed to fix spacing */
 }
 
 .checkbox-container {
