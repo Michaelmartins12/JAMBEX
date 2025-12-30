@@ -56,7 +56,7 @@ function showToast(message, type = "info") {
 
   toast.innerHTML = `
     <i class="fas ${icons[type]} toast-icon"></i>
-    <div class="toast-message">\${message}</div>
+    <div class="toast-message">${message}</div>
   `;
 
   document.body.appendChild(toast);
