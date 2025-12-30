@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyAUN9Pq8R4vlAVCk8KPo4rbFmvXY4DNJYA",
   authDomain: "jambex-4b02b.firebaseapp.com",
@@ -145,11 +144,12 @@ function showToast(message, type = "info") {
 
   document.body.appendChild(toast);
 
-  // Auto remove after 4 seconds
+  // Auto remove after 3 seconds
   setTimeout(() => {
-    toast.style.animation = "slideInRight 0.3s reverse";
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+    toast.style.animation =
+      "toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) reverse forwards";
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
 }
 
 // ========== Form Validation ==========
@@ -324,10 +324,12 @@ signInForm?.querySelector("form").addEventListener("submit", async (e) => {
     // Handle Firebase errors
     let errorMessage = "An error occurred. Please try again.";
 
-    if (error.code === "auth/user-not-found") {
-      errorMessage = "No account found with this email.";
-    } else if (error.code === "auth/wrong-password") {
-      errorMessage = "Incorrect password. Please try again.";
+    if (
+      error.code === "auth/user-not-found" ||
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential"
+    ) {
+      errorMessage = "Invalid email or password. Please try again.";
     } else if (error.code === "auth/invalid-email") {
       errorMessage = "Invalid email address.";
     } else if (error.code === "auth/too-many-requests") {
@@ -437,4 +439,3 @@ const copyRightElement = document.querySelector(".copyRight");
 if (copyRightElement) {
   copyRightElement.textContent = `${new Date().getFullYear()}`;
 }
-

@@ -1,9 +1,3 @@
-/* ============================================
-   JAMBEX INDEX PAGE - AUTHENTICATION HANDLER
-   Handles user authentication state & sign-out
-   ============================================ */
-
-// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import {
   getAuth,
@@ -63,8 +57,9 @@ function showToast(message, type = "info") {
 
   // Auto remove after 3 seconds
   setTimeout(() => {
-    toast.style.animation = "slideInRight 0.3s reverse";
-    setTimeout(() => toast.remove(), 300);
+    toast.style.animation =
+      "toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) reverse forwards";
+    setTimeout(() => toast.remove(), 400);
   }, 3000);
 }
 
@@ -127,8 +122,3 @@ signoutBtn?.addEventListener("click", async () => {
     showToast("Failed to sign out. Please try again.", "error");
   }
 });
-
-console.log(
-  "%c🎓 JambeX Index Ready!",
-  "color: #1E90FF; font-size: 16px; font-weight: bold;"
-);
