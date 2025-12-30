@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jambex</title>
+</head>
+<body>
+
+    <!--navbar sections-->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-group">
+                <h2 class="logo-text">JambeX</h2>
+                <span class="tagline"> - Your Ai Maths Tutor</span>
+            </div>
+            <button class="signin-btn">Sign in</button>
+        </div>
+    </nav>
+
+    <!--The body sections-->
+    <div class="chat-container">
+
+
+        <!-- CHAT AREA -->
+        <div id="chat-area" class="messages"></div>
+
+
+         <!-- ACTION BUTTONS -->
+          <div id="welcome-actions" class="actions-btn">
+            <button onclick="handleAction('notes')">📘 Read Notes</button>
+            <button onclick="handleAction('questions')">📝 Past Questions</button>
+            <button onclick="handleAction('ask')">💬 Ask a Question</button>
+          </div>
+          
+          <!-- SUBJECT SELECTION (HIDDEN INITIALLY) -->
+           <div class="sub-markdown" id="subject-box" style="display: none;">
+
+
+            <select id="subjects">
+                <option>Select Subject</option>
+                <option>Mathematics</option>
+                <option disabled>Coming soon</option>
+            </select>
+
+
+            <select id="topic">
+                <option>Select Topic</option>
+            </select>
+            
+            <select id="subtopic">
+                <option>Select Subtopic</option>
+            </select>
+
+        </div>
+
+        <!--footer messages-->
+        <div class="footer">
+            <input type="text" placeholder="Ask a question..."/>
+            <button class="send-button">send</button>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+</body>
+</html>
