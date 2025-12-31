@@ -14,21 +14,60 @@
     height: 100vh;
     padding: 0;
     gap: 0;
+    align-items: stretch; /* Force children to take full height */
   }
 
   /* Left Blue Sidebar */
   .left-sidebar {
     flex: 1;
+    height: auto; /* Stretch to fill container */
     background: linear-gradient(
       135deg,
-      #0f172a 0%,
-      #1e3a8a 100%
-    ); /* Deep rich blue */
+      #2563eb 0%,
+      #1e40af 100%
+    ); /* Brighter, premium blue gradient */
     position: relative;
     overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
+    padding: 4rem;
+    color: white;
+  }
+
+  .sidebar-content {
+    position: relative;
+    z-index: 10;
+    max-width: 500px;
+    text-align: center; /* Center text */
+  }
+
+  /* Specific styles for sidebar content */
+  .left-sidebar .logo-text {
+    margin-bottom: 0.5rem;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .left-sidebar .tagline {
+    opacity: 0.9;
+    margin-bottom: 3rem;
+  }
+
+  .sidebar-hero-text h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .sidebar-hero-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    max-width: 400px;
+    margin: 0 auto;
   }
 
   /* Show subtle background elements ONLY in sidebar */
@@ -36,46 +75,48 @@
     display: block;
     position: absolute;
     inset: 0;
-    opacity: 0.2;
     pointer-events: none;
+    z-index: 1;
   }
 
   .bg-circle {
     position: absolute;
     border-radius: 50%;
     filter: blur(80px); /* Soft glow blobs */
-    background: white;
+    background: rgba(255, 255, 255, 0.15);
   }
   .bg-circle-1 {
-    width: 400px;
-    height: 400px;
-    top: -100px;
-    right: -100px;
-    opacity: 0.1;
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    right: -200px;
   }
   .bg-circle-2 {
-    width: 300px;
-    height: 300px;
-    bottom: 10%;
-    left: -50px;
-    background: #7dd3fc;
-    opacity: 0.15;
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    left: -150px;
+    background: rgba(147, 197, 253, 0.2);
   }
 
   /* Right Form Area */
   .forms-container {
     flex: 1;
     display: flex;
+    flex-direction: column; /* Ensure vertical stacking */
     align-items: center;
     justify-content: center;
     background-color: #ffffff;
     padding: 4rem;
     max-width: none; /* Reset max-width restriction */
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.03); /* Subtle shadow from form to sidebar */
+    position: relative;
+    z-index: 20;
   }
 
   .auth-form {
     width: 100%;
-    max-width: 480px; /* Constrain form width */
+    max-width: 420px; /* Constrain form width */
     background: transparent;
     padding: 0;
     box-shadow: none; /* Remove card shadow on desktop */
@@ -83,23 +124,7 @@
   }
 
   .bg-elements {
-    display: none; /* Hide background blobs on desktop for clean look */
-  }
-
-  /* Form Brand Styles for Desktop */
-  .form-brand {
-    display: block;
-    font-size: 2rem;
-    color: var(--color-primary);
-    margin-bottom: 2rem;
-    text-align: center;
-    font-weight: 700;
-  }
-
-  .form-header {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+    display: none; /* Hide global background blobs on desktop */
   }
 }
 
@@ -126,6 +151,10 @@
     gap: 1.5rem;
     min-height: 100vh;
     justify-content: center;
+  }
+
+  .sidebar-content {
+    display: none;
   }
 
   .logo-text {

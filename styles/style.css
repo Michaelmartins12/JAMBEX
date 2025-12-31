@@ -172,199 +172,285 @@
   box-sizing: border-box;
 }
 
+body {
+  font-family: "Outfit", sans-serif;
+  color: var(--color-gray-900);
+  background-color: #f8fafc; /* Very light slate bg */
+}
+
+/* Navbar */
 .navbar {
   width: 100%;
-  height: 60px;
+  height: 64px; /* Slightly taller */
   background-color: #ffffff;
-  box-shadow: 4px 6px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Softer shadow */
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 .nav-container {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 0 24px;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .logo-group {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: baseline; /* Better alignment */
+  gap: 8px;
 }
 
 .logo-text {
-  font-family: helvetica;
+  font-family: "Outfit", sans-serif;
   color: dodgerblue;
-  font-size: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 .tagline {
-  font-family: helvetica;
-  font-size: 8px;
-  padding-left: 8px;
-  color: rgb(105, 103, 103);
+  font-family: "Outfit", sans-serif;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Auth Buttons in Nav */
+.signin-btn,
+.signout-btn {
+  padding: 8px 20px;
+  border-radius: 99px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: "Outfit", sans-serif;
+  transition: all 0.2s ease;
 }
 
 .signin-btn {
-  margin-left: auto;
-  width: 60px;
   color: dodgerblue;
   background: white;
   border: 1px solid dodgerblue;
-  border-radius: 20px;
-  font-size: 12px;
-  padding: 4px 0;
-  border-color: dodgerblue;
-  cursor: pointer;
-}
-.signin-btn:hover {
-  color: white;
-  background-color: dodgerblue;
-  transition: color, background-color 0.15s ease;
 }
 
-/* User Profile Section */
+.signin-btn:hover {
+  background-color: #eff6ff;
+}
+
 .auth-section {
   margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.username-display {
-  font-family: helvetica;
-  font-size: 14px;
-  color: #333;
-  font-weight: 500;
 }
 
 .signout-btn {
-  padding: 6px 16px;
   color: white;
   background: dodgerblue;
-  border: 1px solid dodgerblue;
-  border-radius: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: helvetica;
-  transition: all 0.15s ease;
+  border: none;
+}
+.signout-btn:hover {
+  background-color: #1a75d2;
+  box-shadow: 0 4px 6px rgba(30, 144, 255, 0.2);
 }
 
-.signout-btn:hover {
-  background-color: rgb(14, 127, 240);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.username-display {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.95rem;
+  color: #334155;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+/* Main Layout & Chat */
+.main-layout {
+  display: flex;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  width: 100%;
 }
 
 .chat-container {
-  font-family: helvetica;
-  height: calc(100vh - 60px);
+  font-family: "Outfit", sans-serif;
+  width: 100%;
+  max-width: 900px; /* Constrain width for better readability */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f1f4f6;
+  background: white;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.02); /* Very subtle side shadows */
 }
 
+/* Chat Messages Area */
 .messages {
   flex: 1;
-  padding: 12px;
+  padding: 24px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
+/* AI Message Bubble */
 .ai-message {
-  max-width: fit-content;
-  font-family: helvetica;
-  color: #333;
-  background: #efeff3;
-  padding: 10px 14px;
-  border-radius: 12px;
-  margin-left: 10px;
-  margin-top: 6px;
-  margin-bottom: 10px;
-  font-size: 14px;
+  max-width: 85%;
+  color: #1e293b;
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 16px;
+  border-bottom-left-radius: 4px;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
+/* User Message Bubble (Generic style if needed) */
+.user-message {
+  max-width: 85%;
+  align-self: flex-end;
+  background-color: dodgerblue;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border-bottom-right-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Input Area Container (Holds Actions + Input) */
+.input-area-container {
+  padding: 20px;
+  border-top: 1px solid #f1f5f9;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Quick Action Chips */
 .actions-btn {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-left: 10px;
+  flex-direction: row; /* Horizontal alignment */
+  flex-wrap: wrap;
   gap: 10px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  margin-left: auto;
-  font-size: 14px;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  width: 100%;
 }
 
-select {
-  border: 1px solid #b80404;
-  outline: none;
-  gap: 10px;
-  border-radius: 5px;
+.action-chip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 10px 18px;
+  border-radius: 99px;
+  color: #475569;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
+.action-chip i {
+  color: dodgerblue;
+}
 
+.action-chip:hover {
+  background: #f8fafc;
+  border-color: dodgerblue;
+  color: dodgerblue;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Subject Selection Panel */
 .sub-markdown {
   display: flex;
-  flex-direction: column;
-  width: fit-content;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 16px;
-  background: #f1f4f6;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  width: 100%;
 }
+
 .sub-markdown select {
   background: white;
-  border: none;
-  color: #333;
-  background: #efeff3;
-  border-radius: 6px;
-  padding: 10px 16px;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  border-radius: 8px;
+  padding: 8px 12px;
   cursor: pointer;
-  box-sizing: border-box;
+  font-family: "Outfit", sans-serif;
+  outline: none;
+}
+.sub-markdown select:focus {
+  border-color: dodgerblue;
 }
 
-.sub-markdown button {
-  color: #333;
-  background: #efeff3;
-  background-color: #a0b2c7;
-  white-space: nowrap;
-}
-
-
+/* Footer / Input Bar */
 .footer {
   display: flex;
-  padding: 12px;
-  background: #f1f4f6;
+  width: 100%;
+  padding: 0; /* Handled by container */
+  background: transparent;
+}
+
+.input-wrapper-chat {
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .footer input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 20px;
-  box-shadow: 4px 6px 10px rgba(0, 0, 0, 0.03);
-  border: none;
+  width: 100%;
+  padding: 16px 20px;
+  padding-right: 60px; /* Space for button */
+  border-radius: 99px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   outline: none;
+  font-family: "Outfit", sans-serif;
+  font-size: 1rem;
+  color: #334155;
+  transition: all 0.2s ease;
+  box-shadow: none;
 }
 
-.footer button {
-  margin-left: 8px;
-  padding: 10px 16px;
-  border-radius: 20px;
+.footer input:focus {
+  background: white;
+  border-color: dodgerblue;
+  box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
+}
+
+.footer button.send-button {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   border: none;
   background: dodgerblue;
   color: white;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  margin: 0;
 }
 
-.footer button:hover {
-  background-color: rgb(14, 127, 240);
-  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.05);
+.footer button.send-button:hover {
+  background-color: #1a75d2;
+  transform: translateY(-50%) scale(1.05);
 }
 
 /* ========== Toast Notifications ========== */
