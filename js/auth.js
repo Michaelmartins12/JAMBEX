@@ -316,7 +316,7 @@ signInForm?.querySelector("form").addEventListener("submit", async (e) => {
 
     // Redirect to home page
     setTimeout(() => {
-      window.location.href = "/index.html";
+      window.location.href = "/main.html";
     }, 1500);
   } catch (error) {
     console.error("Sign in error:", error);
@@ -378,7 +378,7 @@ async function handleGoogleAuth() {
 
     // Redirect to home page
     setTimeout(() => {
-      window.location.href = "/index.html";
+      window.location.href = "/main.html";
     }, 1500);
   } catch (error) {
     console.error("Google sign-in error:", error);
