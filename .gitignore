@@ -1,0 +1,4 @@
+# Ignore environment and secret files
+styles/jam.env
+.env
+*.env
