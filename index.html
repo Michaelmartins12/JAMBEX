@@ -3,94 +3,428 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jambex</title>
-
+    <title>JambeX - Master Mathematics with AI</title>
     <link rel="stylesheet" href="/styles/style.css" />
-    <link rel="stylesheet" href="/styles/auth.css">
+    <link rel="stylesheet" href="/styles/auth.css" />
+    <link rel="stylesheet" href="/styles/auth-responsive.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <style>
+      /* Landing Page Specific Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-primary);
+        background: var(--bg-secondary);
+        overflow-x: hidden;
+      }
 
+      .landing-navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 5%;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .landing-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .landing-logo h1 {
+        font-size: 1.5rem;
+        color: var(--color-primary);
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .landing-logo span {
+        font-size: 0.8rem;
+        color: var(--color-gray-500);
+      }
+
+      .landing-nav-links a {
+        text-decoration: none;
+        color: var(--color-gray-700);
+        margin-left: 2rem;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .landing-nav-links a:hover {
+        color: var(--color-primary);
+      }
+
+      .cta-button {
+        background: var(--color-primary);
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: var(--shadow-glow);
+      }
+
+      .cta-button:hover {
+        background: var(--color-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow-strong);
+      }
+
+      .secondary-button {
+        background: transparent;
+        color: var(--color-primary);
+        border: 2px solid var(--color-primary);
+        padding: 0.6rem 1.5rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        margin-left: 1rem;
+      }
+
+      .secondary-button:hover {
+        background: rgba(30, 144, 255, 0.1);
+      }
+
+      /* Hero Section */
+      .hero-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 6rem 1rem 4rem;
+        position: relative;
+        min-height: 80vh;
+      }
+
+      .hero-content {
+        z-index: 10;
+        max-width: 800px;
+      }
+
+      .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary) 0%,
+          var(--color-secondary) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1px;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+        color: var(--color-gray-600);
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+      }
+
+      /* Features Grid */
+      .features-section {
+        padding: 4rem 5%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--color-gray-900);
+        margin-bottom: 1rem;
+      }
+
+      .section-subtitle {
+        color: var(--color-gray-500);
+        font-size: 1.1rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 2.5rem;
+        border-radius: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        transition: all 0.3s ease;
+        text-align: left;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-xl);
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        color: var(--color-secondary);
+        margin-bottom: 1.5rem;
+        background: rgba(108, 99, 255, 0.1);
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+      }
+
+      .feature-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--color-gray-800);
+      }
+
+      .feature-text {
+        color: var(--color-gray-600);
+        line-height: 1.6;
+      }
+
+      /* Topics Cloud */
+      .topics-section {
+        padding: 4rem 5%;
+        text-align: center;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(241, 244, 246, 0.5)
+        );
+      }
+
+      .topics-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        max-width: 800px;
+        margin: 2rem auto 0;
+      }
+
+      .topic-pill {
+        background: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 2rem;
+        box-shadow: var(--shadow-sm);
+        color: var(--color-gray-700);
+        font-weight: 500;
+        transition: all 0.3s;
+        cursor: default;
+      }
+
+      .topic-pill:hover {
+        transform: scale(1.05);
+        color: var(--color-primary);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Footer */
+      .landing-footer {
+        background: white;
+        padding: 2rem 5%;
+        text-align: center;
+        border-top: 1px solid var(--color-gray-200);
+        margin-top: 4rem;
+      }
+
+      .footer-links {
+        margin: 1.5rem 0;
+      }
+
+      .footer-links a {
+        color: var(--color-gray-500);
+        text-decoration: none;
+        margin: 0 1rem;
+        font-size: 0.9rem;
+      }
+
+      .copyright {
+        color: var(--color-gray-400);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2.5rem;
+        }
+        .landing-navbar {
+          padding: 1rem;
+        }
+        .landing-nav-links {
+          display: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <!--navbar sections-->
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="logo-group">
-          <h2 class="logo-text">JambeX</h2>
-          <span class="tagline"> - Your Ai Maths Tutor</span>
-        </div>
-
-        <!-- User Profile / Sign In Section -->
-        <div id="auth-section" class="auth-section">
-          <!-- Shown when not logged in -->
-          <button
-            id="signin-btn"
-            class="signin-btn"
-            onclick="window.location.href='/auth.html'"
-            style="display: none"
-          >
-            Sign in
-          </button>
-
-          <!-- Shown when logged in -->
-          <div id="user-profile" class="user-profile" style="display: none">
-            <span id="username-display" class="username-display">User</span>
-            <button id="signout-btn" class="signout-btn">Sign Out</button>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-
-
-
-
-    <!--The body sections-->
-    <div class="chat-container">
-      <!-- CHAT AREA -->
-      <div id="chat-area" class="messages"></div>
-
-      <!-- ACTION BUTTONS -->
-      <div id="welcome-actions" class="actions-btn">
-        <button onclick="handleAction('notes')">📘 Read Notes</button>
-        <button onclick="handleAction('questions')">📝 Past Questions</button>
-        <button onclick="handleAction('ask')">💬 Ask a Question</button>
-      </div>
-
-      <!-- SUBJECT SELECTION (HIDDEN INITIALLY) -->
-      <div class="sub-markdown" id="subject-box" style="display: none">
-        <select id="subjects" required>
-          <option value="" selected>Select Subject</option>
-          <option value="Mathematics">Mathematics</option>
-          <option disabled>Coming soon</option>
-        </select>
-
-        <select name="topic" id="topic" required disabled>
-          <option value="" selected>Select Topic</option>
-          <option value="Algebra">Algebra</option>
-          <option value="Geometry & Mensuration">Geometry & Mensuration</option>
-          <option value="Trigonometry">Trigonometry</option>
-          <option value="Calculus">Calculus</option>
-          <option value="Statistics & Probability">Statistics & Probability</option>
-          <option value="Vectors & Matrices">Vectors & Matrices</option>
-          <option value="Financial Maths">Financial Maths</option>
-        </select>
-
-        <select id="subtopic" required>
-          <option>Select Subtopic</option>
-        </select>
-      </div>
-
-      <!--footer messages-->
-      <div class="footer">
-        <input type="text" placeholder="Ask a question..." />
-        <button class="send-button" id="send-btn">send</button>
-      </div>
+    <!-- Background Elements (Reused from Auth) -->
+    <div class="bg-elements">
+      <div class="bg-circle bg-circle-1" style="top: -10%; left: -10%"></div>
+      <div class="bg-circle bg-circle-2" style="top: 40%; right: -5%"></div>
+      <div class="bg-circle bg-circle-3" style="bottom: -10%; left: 20%"></div>
     </div>
 
-    <script type="module" src="/js/index.js"></script>
-    <script src="/js/script.js"></script>
+    <!-- Navbar -->
+    <nav class="landing-navbar">
+      <div class="landing-logo">
+        <h1>JambeX</h1>
+        <span>AI Tutor</span>
+      </div>
+      <div class="landing-nav-links">
+        <a href="#features">Features</a>
+        <a href="#subjects">Subjects</a>
+        <a href="/auth.html">Sign In</a>
+      </div>
+      <a href="/auth.html" class="cta-button">Get Started</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">Master Mathematics <br />with Your AI Tutor</h1>
+        <p class="hero-subtitle">
+          Experience a new way to learn. Personalized explanations, instant
+          doubt clearing, and comprehensive practice questions tailored just for
+          you.
+        </p>
+        <div class="hero-actions">
+          <a
+            href="/auth.html"
+            class="cta-button"
+            style="font-size: 1.1rem; padding: 1rem 2rem"
+            >Start Learning Free</a
+          >
+          <a
+            href="#features"
+            class="secondary-button"
+            style="font-size: 1.1rem; padding: 1rem 2rem"
+            >Explore Features</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+      <div class="section-header">
+        <h2 class="section-title">Why Choose JambeX?</h2>
+        <p class="section-subtitle">
+          Everything you need to excel in your exams
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3 class="feature-title">AI-Powered Tutoring</h3>
+          <p class="feature-text">
+            Get instant, accurate explanations for complex math problems. Our AI
+            tutor adapts to your learning style and pace.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <h3 class="feature-title">Past Questions</h3>
+          <p class="feature-text">
+            Access a vast library of past examination questions to practice and
+            familiarize yourself with exam patterns.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="feature-title">Track Your Progress</h3>
+          <p class="feature-text">
+            Monitor your improvement with detailed analytics. Identify your weak
+            areas and turn them into strengths.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Subjects Section -->
+    <section id="subjects" class="topics-section">
+      <div class="section-header">
+        <h2 class="section-title">Comprehensive Coverage</h2>
+        <p class="section-subtitle">Master every topic in the syllabus</p>
+      </div>
+      <div class="topics-cloud">
+        <div class="topic-pill">Algebra</div>
+        <div class="topic-pill">Geometry</div>
+        <div class="topic-pill">Trigonometry</div>
+        <div class="topic-pill">Calculus</div>
+        <div class="topic-pill">Statistics</div>
+        <div class="topic-pill">Probability</div>
+        <div class="topic-pill">Vectors</div>
+        <div class="topic-pill">Matrices</div>
+        <div class="topic-pill">Financial Maths</div>
+        <div class="topic-pill">Mensuration</div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div
+        class="landing-logo"
+        style="justify-content: center; margin-bottom: 1rem"
+      >
+        <h1 style="color: var(--color-gray-800)">JambeX</h1>
+      </div>
+      <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+      <p class="copyright">
+        &copy; <span id="year"></span> JambeX. All rights reserved.
+      </p>
+    </footer>
+
+    <script>
+      // Set current year
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
