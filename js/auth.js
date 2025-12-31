@@ -427,10 +427,11 @@ forgotPasswordLink?.addEventListener("click", async (e) => {
 });
 
 // Monitor authentication state - redirect if already signed in
+// Monitor authentication state - redirect if already signed in
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    // User is signed in, redirect to home page
-    window.location.href = "/index.html";
+    // User is signed in, redirect to main app
+    window.location.href = "/main.html";
   }
 });
 
