@@ -6,10 +6,12 @@
     <title>Jambex</title>
 
     <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/auth.css">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+
   </head>
   <body>
     <!--navbar sections-->
@@ -41,6 +43,10 @@
       </div>
     </nav>
 
+
+
+
+
     <!--The body sections-->
     <div class="chat-container">
       <!-- CHAT AREA -->
@@ -55,17 +61,24 @@
 
       <!-- SUBJECT SELECTION (HIDDEN INITIALLY) -->
       <div class="sub-markdown" id="subject-box" style="display: none">
-        <select id="subjects">
-          <option>Select Subject</option>
-          <option>Mathematics</option>
+        <select id="subjects" required>
+          <option value="" selected>Select Subject</option>
+          <option value="Mathematics">Mathematics</option>
           <option disabled>Coming soon</option>
         </select>
 
-        <select id="topic">
-          <option>Select Topic</option>
+        <select name="topic" id="topic" required disabled>
+          <option value="" selected>Select Topic</option>
+          <option value="Algebra">Algebra</option>
+          <option value="Geometry & Mensuration">Geometry & Mensuration</option>
+          <option value="Trigonometry">Trigonometry</option>
+          <option value="Calculus">Calculus</option>
+          <option value="Statistics & Probability">Statistics & Probability</option>
+          <option value="Vectors & Matrices">Vectors & Matrices</option>
+          <option value="Financial Maths">Financial Maths</option>
         </select>
 
-        <select id="subtopic">
+        <select id="subtopic" required>
           <option>Select Subtopic</option>
         </select>
       </div>
@@ -73,7 +86,7 @@
       <!--footer messages-->
       <div class="footer">
         <input type="text" placeholder="Ask a question..." />
-        <button class="send-button">send</button>
+        <button class="send-button" id="send-btn">send</button>
       </div>
     </div>
 

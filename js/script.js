@@ -2,7 +2,7 @@ const chatArea = document.getElementById("chat-area");
 chatArea.innerHTML = `
   <div class="ai-message">
     <p><strong>Welcome to JambeX 👋</strong></p>
-    <p>Your AI tutor for JAMB Mathematics.</p>
+    <p>Your AI powered jamb learning assistant.</p>
     <p>What would you like to do?</p>
   </div>
 `;
@@ -16,7 +16,7 @@ function handleAction(action) {
   chatArea.innerHTML += `
     <div class="ai-message">
       <p>Great choice 👍</p>
-      <p>Please select a subject to continue.</p>
+      <p>Please choose an option to continue.</p>
     </div>
   `;
 
@@ -41,35 +41,56 @@ function onSubtopicSelected() {
   }
 }
 
+const subjectDropDown = document.getElementById("subjects");
+subjectDropDown.addEventListener("change", function() {
+  // reveal topic dropdown
+  document.getElementById("topic").disabled = false;
+})
 
     
     // Dynamic Subtopic options based on selected Topic
     const subtopics = {
-        "Algebra": ["Quadratic Equations", "Simultaneous Equations", "Polynomials", "Sequences & Series", "Logarithms"],
-        "Geometry & Mensuration": ["Plane Geometry", "Solid Geometry", "Coordinate Geometry"],
-        "Trigonometry": ["Trig Ratios & Identities", "Heights & Distances", "Graphs of Trig Functions"],
-        "Calculus": ["Differentiation", "Integration", "Applications of Derivatives"],
-        "Statistics & Probability": ["Mean, Median, Mode", "Probability", "Permutations & Combinations", "Set Theory"],
-        "Vectors & Matrices": ["Vector Operations", "Scalar & Vector Products", "Matrix Algebra"],
-        "Financial Maths": ["Simple Interest", "Compound Interest", "Percentage Problems"]
-    };
+    "Algebra": ["Quadratic Equations", "Simultaneous Equations", "Polynomials", "Sequences & Series", "Logarithms"],
+    "Geometry & Mensuration": ["Plane Geometry", "Solid Geometry", "Coordinate Geometry"],
+    "Trigonometry": ["Trig Ratios & Identities", "Heights & Distances", "Graphs of Trig Functions"],
+    "Calculus": ["Differentiation", "Integration", "Applications of Derivatives"],
+    "Statistics & Probability": ["Mean, Median, Mode", "Probability", "Permutations & Combinations", "Set Theory"],
+    "Vectors & Matrices": ["Vector Operations", "Scalar & Vector Products", "Matrix Algebra"],
+    "Financial Maths": ["Simple Interest", "Compound Interest", "Percentage Problems"]
+};
 
-    const topicDropdown = document.getElementById("topic");
-    const subtopicDropdown = document.getElementById("subtopic");
+const topicDropdown = document.getElementById("topic");
+const subtopicDropdown = document.getElementById("subtopic");
 
-    topicDropdown.addEventListener("change", function() {
-        const selectedTopic = this.value;
+// Initially disable subtopic
+subtopicDropdown.disabled = true;
 
-        
-        // Clear previous subtopics
-        subtopicDropdown.innerHTML = '<option value="">Select Subtopic</option>';
+topicDropdown.addEventListener("change", function() {
+    const selectedTopic = this.value;
 
-        if(subtopics[selectedTopic]) {
-            subtopics[selectedTopic].forEach(function(sub) {
-                const option = document.createElement("option");
-                option.value = sub;
-                option.text = sub;
-                subtopicDropdown.appendChild(option);
-            });
-        }
-    });
+    // Clear previous subtopics
+    subtopicDropdown.innerHTML = '';
+
+    if(subtopics[selectedTopic]) {
+        // Add placeholder option (required validation works)
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.text = "Select Subtopic";
+        placeholder.disabled = true;  // Prevent selection
+        placeholder.selected = true;  // Default selected
+        subtopicDropdown.appendChild(placeholder);
+
+        // Add actual subtopics
+        subtopics[selectedTopic].forEach(function(sub) {
+            const option = document.createElement("option");
+            option.value = sub;
+            option.text = sub;
+            subtopicDropdown.appendChild(option);
+        });
+
+        // Enable subtopic dropdown
+        subtopicDropdown.disabled = false;
+    } else {
+        subtopicDropdown.disabled = true;
+    }
+});

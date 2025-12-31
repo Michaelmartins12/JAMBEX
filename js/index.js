@@ -65,33 +65,29 @@ function showToast(message, type = "info") {
 
 // ========== Authentication State Listener ==========
 onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    // User is signed in
-    console.log("User is signed in:", user.email);
+  const currentPath = window.location.pathname;
 
-    // Get user data from Firestore
+  if (user) {
+    // If user is on the auth page while signed in, send them to home
+    if (currentPath.endsWith("/auth.html") || currentPath === "/auth.html") {
+      window.location.href = "/index.html";
+      return;
+    }
+
+    // User is signed in: show profile
+    console.log("User is signed in:", user.email);
     try {
       const userDoc = await getDoc(doc(db, "users", user.uid));
+      const displayName =
+        (userDoc.exists() && userDoc.data().name) ||
+        user.displayName ||
+        user.email.split("@")[0];
 
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const displayName =
-          userData.name || user.displayName || user.email.split("@")[0];
-
-        // Show user profile, hide sign-in button
-        usernameDisplay.textContent = displayName;
-        userProfile.style.display = "flex";
-        signinBtn.style.display = "none";
-      } else {
-        // No user document found, use email
-        const displayName = user.displayName || user.email.split("@")[0];
-        usernameDisplay.textContent = displayName;
-        userProfile.style.display = "flex";
-        signinBtn.style.display = "none";
-      }
+      usernameDisplay.textContent = displayName;
+      userProfile.style.display = "flex";
+      signinBtn.style.display = "none";
     } catch (error) {
       console.error("Error fetching user data:", error);
-      // Fallback to email
       const displayName = user.displayName || user.email.split("@")[0];
       usernameDisplay.textContent = displayName;
       userProfile.style.display = "flex";
@@ -101,7 +97,17 @@ onAuthStateChanged(auth, async (user) => {
     // User is signed out
     console.log("User is signed out");
 
-    // Show sign-in button, hide user profile
+    // If the user is on the home page (index) redirect to auth page
+    if (
+      currentPath === "/" ||
+      currentPath.endsWith("/index.html") ||
+      currentPath === "/index.html"
+    ) {
+      window.location.href = "/auth.html";
+      return;
+    }
+
+    // Otherwise, show sign-in button and hide profile
     userProfile.style.display = "none";
     signinBtn.style.display = "block";
   }

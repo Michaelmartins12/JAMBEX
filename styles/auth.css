@@ -97,14 +97,16 @@ body {
 
 /* ========== Form Typography ========== */
 .form-title {
+  font-family: helvetica;
+  color: dodgerblue;
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-gray-900);
   margin-bottom: var(--spacing-sm);
   text-align: center;
 }
 
 .form-subtitle {
+  font-family: helvetica;
   font-size: var(--font-size-sm);
   color: var(--color-gray-600);
   text-align: center;
@@ -485,7 +487,6 @@ body {
   margin-top: var(--spacing-2xl);
   flex-wrap: wrap;
   z-index: 1;
-  flex-direction: rowh;
 }
 
 .feature {
