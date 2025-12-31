@@ -1,44 +1,105 @@
 /* Responsive overrides for auth page */
 
 /* Desktop / Large screens: layout side-by-side */
+/* Desktop / Large screens: Split Screen Layout */
 @media (min-width: 1024px) {
+  body {
+    overflow: hidden; /* Prevent scrolling on desktop */
+  }
+
   .auth-container {
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem;
-    gap: 4rem;
-    min-height: 100vh;
-  }
-
-  .logo-section {
-    flex: 0 0 300px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Left Blue Sidebar */
+  .left-sidebar {
+    flex: 1;
+    background: linear-gradient(
+      135deg,
+      #0f172a 0%,
+      #1e3a8a 100%
+    ); /* Deep rich blue */
+    position: relative;
+    overflow: hidden;
+    display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 2rem;
   }
 
-  .forms-container {
-    flex: 0 0 500px;
-    max-width: 500px;
-    margin: 0;
-  }
-
-  /* premium-features removed */
-
-  .bg-elements {
+  /* Show subtle background elements ONLY in sidebar */
+  .left-sidebar .bg-elements {
     display: block;
     position: absolute;
     inset: 0;
-    z-index: 0;
+    opacity: 0.2;
     pointer-events: none;
   }
 
-  .auth-container > * {
-    z-index: 1;
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px); /* Soft glow blobs */
+    background: white;
+  }
+  .bg-circle-1 {
+    width: 400px;
+    height: 400px;
+    top: -100px;
+    right: -100px;
+    opacity: 0.1;
+  }
+  .bg-circle-2 {
+    width: 300px;
+    height: 300px;
+    bottom: 10%;
+    left: -50px;
+    background: #7dd3fc;
+    opacity: 0.15;
+  }
+
+  /* Right Form Area */
+  .forms-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 4rem;
+    max-width: none; /* Reset max-width restriction */
+  }
+
+  .auth-form {
+    width: 100%;
+    max-width: 480px; /* Constrain form width */
+    background: transparent;
+    padding: 0;
+    box-shadow: none; /* Remove card shadow on desktop */
+    border: none; /* Remove border */
+  }
+
+  .bg-elements {
+    display: none; /* Hide background blobs on desktop for clean look */
+  }
+
+  /* Form Brand Styles for Desktop */
+  .form-brand {
+    display: block;
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .form-header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 }
 
