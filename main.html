@@ -27,6 +27,11 @@
           <span class="tagline"> - Your Ai Maths Tutor</span>
         </div>
 
+        <!-- Hamburger Menu Button -->
+        <button class="hamburger" id="hamburger-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+
         <!-- User Profile / Sign In Section -->
         <div id="auth-section" class="auth-section">
           <!-- Shown when not logged in -->
@@ -49,68 +54,47 @@
     </nav>
 
     <!--The body sections-->
-    <div class="main-layout">
-      <div class="chat-container">
-        <!-- CHAT AREA -->
-        <div id="chat-area" class="messages"></div>
+    <div class="chat-container">
+      <!-- CHAT AREA -->
+      <div id="chat-area" class="messages"></div>
 
-        <!-- ACTION BUTTONS & INPUT AREA CONTAINER -->
-        <div class="input-area-container">
-          <!-- ACTION BUTTONS -->
-          <div id="welcome-actions" class="actions-btn">
-            <button onclick="handleAction('notes')" class="action-chip">
-              <i class="fas fa-book"></i> Read Notes
-            </button>
-            <button onclick="handleAction('questions')" class="action-chip">
-              <i class="fas fa-clipboard-list"></i> Past Questions
-            </button>
-            <button onclick="handleAction('ask')" class="action-chip">
-              <i class="fas fa-comment-dots"></i> Ask a Question
-            </button>
-          </div>
+      <!-- ACTION BUTTONS -->
+      <div id="welcome-actions" class="actions-btn">
+        <button onclick="handleAction('notes')">📘 Read Notes</button>
+        <button onclick="handleAction('questions')">📝 Past Questions</button>
+        <button onclick="handleAction('ask')">💬 Ask a Question</button>
+      </div>
 
-          <!-- SUBJECT SELECTION (HIDDEN INITIALLY) -->
-          <div class="sub-markdown" id="subject-box" style="display: none">
-            <select id="subjects" required>
-              <option value="" selected>Select Subject</option>
-              <option value="Mathematics">Mathematics</option>
-              <option disabled>Coming soon</option>
-            </select>
+      <!-- SUBJECT SELECTION (HIDDEN INITIALLY) -->
+      <div class="sub-markdown" id="subject-box" style="display: none">
+        <select id="subjects" required>
+          <option value="" selected>Select Subject</option>
+          <option value="Mathematics">Mathematics</option>
+          <option disabled>Coming soon</option>
+        </select>
 
-            <select name="topic" id="topic" required disabled>
-              <option value="" selected>Select Topic</option>
-              <option value="Algebra">Algebra</option>
-              <option value="Geometry & Mensuration">
-                Geometry & Mensuration
-              </option>
-              <option value="Trigonometry">Trigonometry</option>
-              <option value="Calculus">Calculus</option>
-              <option value="Statistics & Probability">
-                Statistics & Probability
-              </option>
-              <option value="Vectors & Matrices">Vectors & Matrices</option>
-              <option value="Financial Maths">Financial Maths</option>
-            </select>
+        <select name="topic" id="topic" required disabled>
+          <option value="" selected>Select Topic</option>
+          <option value="Algebra">Algebra</option>
+          <option value="Geometry & Mensuration">Geometry & Mensuration</option>
+          <option value="Trigonometry">Trigonometry</option>
+          <option value="Calculus">Calculus</option>
+          <option value="Statistics & Probability">
+            Statistics & Probability
+          </option>
+          <option value="Vectors & Matrices">Vectors & Matrices</option>
+          <option value="Financial Maths">Financial Maths</option>
+        </select>
 
-            <select id="subtopic" required>
-              <option>Select Subtopic</option>
-            </select>
-          </div>
+        <select id="subtopic" required>
+          <option>Select Subtopic</option>
+        </select>
+      </div>
 
-          <!--footer messages-->
-          <div class="footer">
-            <div class="input-wrapper-chat">
-              <input
-                type="text"
-                placeholder="Ask a question..."
-                id="chat-input"
-              />
-              <button class="send-button" id="send-btn">
-                <i class="fas fa-paper-plane"></i>
-              </button>
-            </div>
-          </div>
-        </div>
+      <!--footer messages-->
+      <div class="footer">
+        <input type="text" placeholder="Ask a question..." />
+        <button class="send-button" id="send-btn">send</button>
       </div>
     </div>
 

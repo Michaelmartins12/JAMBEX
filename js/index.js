@@ -26,10 +26,28 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // DOM Elements
+// DOM Elements
 const signinBtn = document.getElementById("signin-btn");
 const userProfile = document.getElementById("user-profile");
 const usernameDisplay = document.getElementById("username-display");
 const signoutBtn = document.getElementById("signout-btn");
+const hamburgerBtn = document.getElementById("hamburger-btn");
+const authSection = document.getElementById("auth-section");
+
+// ========== Mobile Menu Toggle ==========
+hamburgerBtn?.addEventListener("click", () => {
+  authSection.classList.toggle("mobile-visible");
+
+  // Toggle icon between bars and times
+  const icon = hamburgerBtn.querySelector("i");
+  if (authSection.classList.contains("mobile-visible")) {
+    icon.classList.remove("fa-bars");
+    icon.classList.add("fa-times");
+  } else {
+    icon.classList.remove("fa-times");
+    icon.classList.add("fa-bars");
+  }
+});
 
 // ========== Toast Notification ==========
 function showToast(message, type = "info") {
