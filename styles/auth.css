@@ -485,6 +485,7 @@ body {
   margin-top: var(--spacing-2xl);
   flex-wrap: wrap;
   z-index: 1;
+  flex-direction: rowh;
 }
 
 .feature {
