@@ -207,7 +207,7 @@ body {
 
 .logo-group {
   position: absolute;
-  left: 7%;
+  left: 20%;
   display: flex; /* Better alignment */
   flex-direction: column;
 }
@@ -232,59 +232,6 @@ body {
   padding: 8px;
 }
 
-/* ========== Responsive / Mobile Styles ========== */
-
-@media (max-width: 768px) {
-  .nav-container {
-    padding: 0 16px;
-    justify-content: space-between;
-    position: relative;
-  }
-
-  .logo-text {
-    font-size: 1.25rem;
-  }
-
-  .tagline {
-    display: none; /* Simplify logo on mobile */
-  }
-
-  .hamburger {
-    display: block;
-    margin-left: auto;
-  }
-
-  /* Mobile Nav Dropdown */
-  .auth-section {
-    display: none; /* Hidden by default on mobile */
-    position: absolute;
-    top: 60px; /* Match navbar height */
-    left: 0;
-    width: 100%;
-    background: white;
-    flex-direction: column;
-    padding: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    align-items: center;
-    border-top: 1px solid #f1f5f9;
-    z-index: 999;
-  }
-
-  .auth-section.mobile-visible {
-    display: flex; /* Shown when toggled */
-    animation: slideDown 0.2s ease-out;
-  }
-
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 
 
 
@@ -801,3 +748,62 @@ body {
     transform: translateY(0);
   }
 }
+
+
+/* ========== Responsive / Mobile Styles ========== */
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .nav-center {
+    display: block;
+  }
+
+  .logo-text {
+    font-size: 1.25rem;
+  }
+
+  .tagline {
+    display: none; /* Simplify logo on mobile */
+  }
+
+  .hamburger {
+    display: block;
+    margin-left: auto;
+  }
+
+  /* Mobile Nav Dropdown */
+  .auth-section {
+    display: none; /* Hidden by default on mobile */
+    position: absolute;
+    top: 60px; /* Match navbar height */
+    left: 0;
+    width: 100%;
+    background: white;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    z-index: 999;
+  }
+
+  .auth-section.mobile-visible {
+    display: flex; /* Shown when toggled */
+    animation: slideDown 0.2s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
