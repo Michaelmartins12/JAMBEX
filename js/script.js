@@ -25,6 +25,7 @@ function handleAction(action) {
   // hide the welcome buttons
   document.getElementById("welcome-actions").style.display = "none";
 }
+window.handleAction = handleAction;
 
 function onSubtopicSelected() {
   if (selectedAction === "notes") {

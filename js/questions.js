@@ -79,6 +79,18 @@ class QuestionManager {
   }
 
   displayQuestion(data) {
+    // Hide the subject selection box when questions start
+    const subjectBox = document.getElementById("subject-box");
+    if (subjectBox) {
+      subjectBox.style.display = "none";
+    }
+
+    // Hide previous questions
+    const prevQuestions = this.chatArea.querySelectorAll(".question-container");
+    prevQuestions.forEach((q) => {
+      q.classList.add("history-hidden");
+    });
+
     // Create unique ID for this question block to handle events
     const questionId = "q-" + Date.now();
 
