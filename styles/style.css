@@ -197,7 +197,7 @@ body {
   height: 100%;
   position: relative;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 10 auto;
 }
 
 .nav-left {
@@ -206,7 +206,7 @@ body {
 
 .logo-group {
   position: absolute;
-  left: 8%;
+  left: 15%;
   display: flex; /* Better alignment */
   flex-direction: column;
 }
