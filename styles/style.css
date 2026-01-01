@@ -207,7 +207,7 @@ body {
 
 .logo-group {
   position: absolute;
-  left: 8%;
+  left: 9%;
   display: flex; /* Better alignment */
   flex-direction: column;
 }
