@@ -195,7 +195,7 @@ body {
   justify-content: space-between;
   padding: 12px 24px;
   height: 100%;
-  position: relative;
+  position: relative;~
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -207,8 +207,7 @@ body {
 
 .logo-group {
   position: absolute;
-  left: 6%;
-  transform: translateX(-3%);
+  left: 7%;
   display: flex; /* Better alignment */
   flex-direction: column;
 }
