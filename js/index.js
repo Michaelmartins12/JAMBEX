@@ -80,6 +80,7 @@ function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 400);
   }, 3000);
 }
+window.showToast = showToast;
 
 // ========== Authentication State Listener ==========
 onAuthStateChanged(auth, async (user) => {
