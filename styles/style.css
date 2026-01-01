@@ -204,7 +204,6 @@ body {
   flex: 0 0 auto;
 }
 
-
 .logo-group {
   position: absolute;
   left: 8%;
@@ -212,7 +211,6 @@ body {
   flex-direction: column;
 }
 
-<<<<<<< HEAD
 .navbar .logo-text {
   font-family: "Outfit", sans-serif;
   background: linear-gradient(135deg, #1e90ff 0%, #6c63ff 100%);
@@ -224,17 +222,7 @@ body {
   font-weight: 800;
   margin: 0;
   letter-spacing: -0.5px;
-=======
-.logo-group h2 {
-  padding-left: 20px;
-  color: dodgerblue;
-  font-size: 2rem;
-  font-weight: 600;
-  font-family: "helvetica" Arial, Helvetica, sans-serif;
->>>>>>> 8582735fb308be81e3600635b54c5423d03506e6
 }
-
-
 
 /* Hamburger Menu */
 .hamburger {
@@ -247,14 +235,6 @@ body {
   margin-right: auto;
   padding: 8px;
 }
-
-
-
-
-
-
-
-
 
 /* Auth Buttons in Nav */
 .signin-btn,
@@ -329,13 +309,8 @@ body {
   width: fit-content;
   color: #1e293b;
   background: #ffffff;
-<<<<<<< HEAD
   padding: 20px;
   border-radius: 20px;
-=======
-  padding: 15px 30px;
-  border-radius: 16px;
->>>>>>> 8582735fb308be81e3600635b54c5423d03506e6
   border-bottom-left-radius: 4px;
   font-size: 1rem;
   line-height: 1.6;
@@ -430,7 +405,6 @@ body {
   border-color: dodgerblue;
   box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
 }
-
 
 /* Footer / Input Bar */
 .footer {
@@ -582,7 +556,7 @@ body {
   line-height: 1.4;
 }
 
-
+@media (max-width: 768px) {
   .auth-section .signin-btn,
   .auth-section .signout-btn {
     width: 100%;
@@ -808,7 +782,6 @@ body {
   }
 }
 
-
 /* ========== Responsive / Mobile Styles ========== */
 
 @media (max-width: 768px) {
@@ -866,3 +839,4 @@ body {
       transform: translateY(0);
     }
   }
+}
