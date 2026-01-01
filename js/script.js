@@ -17,7 +17,7 @@ function handleAction(action) {
     window.showToast?.(
       "Coming Soon! This feature is under development.",
       "info"
-    ) || alert("Coming Soon!");
+    );
     return;
   }
 
