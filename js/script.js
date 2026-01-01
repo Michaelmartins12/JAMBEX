@@ -12,19 +12,61 @@ let selectedAction = null;
 function handleAction(action) {
   selectedAction = action;
 
-  chatArea.innerHTML += `
-    <div class="ai-message">
-      <p>Great choice 👍</p>
-      <p>Please choose an option to continue.</p>
-    </div>
-  `;
+  if (action === "notes" || action === "ask") {
+    // Show Coming Soon Toast
+    window.showToast?.(
+      "Coming Soon! This feature is under development.",
+      "info"
+    ) || alert("Coming Soon!");
+    return;
+  }
 
-  // reveal subject dropdowns
-  document.getElementById("subject-box").style.display = "flex";
+  if (action === "questions") {
+    // Clear welcome message
+    chatArea.innerHTML = "";
 
-  // hide the welcome buttons
-  document.getElementById("welcome-actions").style.display = "none";
+    // Show Mode Header
+    const modeHeader = document.getElementById("mode-header");
+    const modeTitle = document.getElementById("mode-title");
+    modeHeader.style.display = "flex";
+    modeTitle.innerText = "Past Questions";
+
+    // Reveal subject dropdowns
+    document.getElementById("subject-box").style.display = "flex";
+
+    // Hide welcome buttons
+    document.getElementById("welcome-actions").style.display = "none";
+  }
 }
+window.handleAction = handleAction;
+
+// Back Button Logic
+document.getElementById("back-to-menu-btn").addEventListener("click", () => {
+  // Reset UI
+  document.getElementById("mode-header").style.display = "none";
+  document.getElementById("subject-box").style.display = "none";
+  document.getElementById("welcome-actions").style.display = "flex";
+
+  // Restore Welcome Message
+  chatArea.innerHTML = `
+      <div class="ai-message">
+        <p><strong>Welcome to JambeX 👋</strong></p>
+        <p>Your AI powered jamb learning assistant.</p>
+        <p>What would you like to do?</p>
+      </div>
+    `;
+
+  // Reset state
+  selectedAction = null;
+
+  // Reset dropdowns if needed (optional)
+  document.getElementById("subjects").value = "";
+  document.getElementById("topic").disabled = true;
+  document.getElementById("topic").value = "";
+  document.getElementById("subtopic").disabled = true;
+  document.getElementById("subtopic").innerHTML =
+    "<option>Select Subtopic</option>";
+});
 
 function onSubtopicSelected() {
   if (selectedAction === "notes") {

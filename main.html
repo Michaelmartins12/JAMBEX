@@ -4,9 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jambex</title>
-
-    <link rel="stylesheet" href="/styles/style.css" />
-    <link rel="stylesheet" href="/styles/auth.css" />
+    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="styles/auth-responsive.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,24 +21,16 @@
     <!--navbar sections-->
     <nav class="navbar">
       <div class="nav-container">
+        <!-- Hamburger Menu Button -->
+        <div class="nav-center">
+          <button class="hamburger" id="hamburger-btn">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
 
-
-
-          <!-- Hamburger Menu Button -->
-         <div class="nav-center">
-           <button class="hamburger" id="hamburger-btn">
-            <i class="fas fa-bars"></i></button>
-         </div>
-        
-        
-
-
-        
         <div class="logo-group">
           <h2 class="logo-text">JambeX</h2>
         </div>
-
-        
 
         <!-- User Profile / Sign In Section -->
         <div id="auth-section" class="auth-section">
@@ -55,7 +46,7 @@
 
           <!-- Shown when logged in -->
           <div id="user-profile" class="user-profile" style="display: none">
-            <span id="username-display" class="username-display">User</span>
+            <span id="username-display" class="username-display">User~</span>
             <button id="signout-btn" class="signout-btn">Sign Out</button>
           </div>
         </div>
@@ -64,6 +55,14 @@
 
     <!--The body sections-->
     <div class="chat-container">
+      <!-- MODE HEADER (Hidden by default) -->
+      <div id="mode-header" class="mode-header" style="display: none">
+        <button id="back-to-menu-btn" class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h3 id="mode-title">Mode Name</h3>
+      </div>
+
       <!-- CHAT AREA -->
       <div id="chat-area" class="messages"></div>
 
@@ -71,7 +70,7 @@
       <div id="welcome-actions" class="actions-btn">
         <button onclick="handleAction('notes')">📘 Read Notes</button>
         <button onclick="handleAction('questions')">📝 Past Questions</button>
-        <button onclick="handleAction('ask')">💬 Ask a Question</button>
+        <button onclick="handleAction('ask')">💬 FlashCard</button>
       </div>
 
       <!-- SUBJECT SELECTION (HIDDEN INITIALLY) -->
@@ -113,8 +112,12 @@
 
       <!--footer messages-->
       <div class="footer">
-        <input type="text" placeholder="Ask a question..." />
-        <button class="send-button" id="send-btn">send</button>
+        <div class="input-wrapper-chat">
+          <input type="text" id="chat-input" placeholder="Ask a question..." />
+          <button class="send-button" id="send-btn">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
       </div>
     </div>
 
