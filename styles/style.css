@@ -181,42 +181,41 @@ body {
 /* Navbar */
 .navbar {
   width: 100%;
-  height: 64px; /* Slightly taller */
   background-color: #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Softer shadow */
   position: sticky;
   top: 0;
   z-index: 100;
 }
+
 .nav-container {
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  justify-content: space-between;
+  padding: 12px 24px;
   height: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .logo-group {
-  display: flex;
-  align-items: baseline; /* Better alignment */
-  gap: 8px;
+  display: flex; /* Better alignment */
+  flex-direction: column;
+  justify-content: center;
 }
 
 .logo-text {
-  font-family: "Outfit", sans-serif;
   color: dodgerblue;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
+  padding-top: 20px;
 }
 
 .tagline {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 400;
+  font-size: 0.8rem;
 }
+
+
+
+
 
 /* Auth Buttons in Nav */
 .signin-btn,
@@ -286,10 +285,11 @@ body {
 
 /* AI Message Bubble */
 .ai-message {
-  max-width: 85%;
+  max-width: 60%;
+  width: fit-content;
   color: #1e293b;
   background: #ffffff;
-  padding: 16px;
+  padding: 15px 30px;
   border-radius: 16px;
   border-bottom-left-radius: 4px;
   font-size: 1rem;
@@ -324,11 +324,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Kept aligned left as per original feel */
-  margin-left: auto; /* Push to right side */
+  margin-bottom: 120px; /* Push to right side */
   gap: 12px;
-  padding: 12px 24px;
+  padding: 15px 30px;
   border-radius: 12px;
-  margin-bottom: 0;
   width: fit-content;
 }
 
@@ -384,6 +383,7 @@ body {
   border-color: dodgerblue;
   box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
 }
+
 
 /* Footer / Input Bar */
 .footer {
