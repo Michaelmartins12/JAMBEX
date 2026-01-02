@@ -93,8 +93,10 @@ class QuestionManager {
     const apiSubject = subjectMap[subject] || subject.toLowerCase();
 
     try {
-      const url = `${ALOC_BASE_URL}?subject=${apiSubject}&limit=40`;
-      console.log(`[Cache] Fetching from URL: ${url}`);
+      // Use 'm' endpoint for bulk fetch (returns 40 questions)
+      // Hardcoding base to avoid replace() issues corrupting domain
+      const url = `https://questions.aloc.com.ng/api/v2/m?subject=${apiSubject}`;
+      console.log(`[Cache] Fetching bulk from URL: ${url}`);
 
       const response = await fetch(url, {
         headers: { AccessToken: ALOC_ACCESS_TOKEN },
@@ -105,7 +107,6 @@ class QuestionManager {
       if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
       const resJson = await response.json();
-      console.log("[Cache] API Response:", resJson);
 
       // Normalize: API might return object (1 question) or array (n questions)
       let questions = Array.isArray(resJson.data)
@@ -114,6 +115,15 @@ class QuestionManager {
 
       if (questions && questions.length > 0 && questions[0]) {
         console.log(`[Cache] Fetched ${questions.length} from API.`);
+
+        // Deduplicate against local data
+        const existingIds = new Set(localData.map((q) => q.id));
+        questions = questions.filter((q) => !existingIds.has(q.id));
+
+        if (questions.length === 0) {
+          console.log("[Cache] All fetched questions already exist locally.");
+          return localData;
+        }
 
         // Seed Firestore asynchronously ONLY if active
         if (firestoreActive && window.fs && window.db) {
@@ -124,6 +134,7 @@ class QuestionManager {
               const docData = {
                 subject: subject,
                 question: q.question,
+                id: q.id, // Important for indexing
                 option: q.option,
                 answer: q.answer,
                 image: q.image || "",
