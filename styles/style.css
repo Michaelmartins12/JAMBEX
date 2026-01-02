@@ -473,10 +473,9 @@ body {
 .sub-markdown {
   display: flex;
   flex-direction: row;
-  width: fit-content;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 290px;
+  gap: 10px;
+  margin-bottom: 100%;
   padding: 12px 24px;
   background: transparent;
 }
@@ -487,11 +486,12 @@ body {
   color: #334155;
   border-radius: 12px;
   padding: 12px 16px;
+  width: 40%;
   cursor: pointer;
   font-family: "Outfit", sans-serif;
   outline: none;
-  font-size: 0.95rem;
-  min-width: 200px;
+  font-size: 12px;
+  min-width: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 .sub-markdown select:focus {
