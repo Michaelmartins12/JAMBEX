@@ -246,13 +246,30 @@ class QuestionManager {
 
     if (mode === "exam") {
       document.getElementById("game-timer").style.display = "flex";
-      this.startTimer(config.duration_minutes * 60);
-      this.totalQuestions = config.count;
-      document.getElementById("finish-game-btn").style.display = "none";
+
+      // Calculate or Restore Target Time
+      if (!this.config.targetTime) {
+        // New Exam: Set target to Now + Duration
+        this.config.targetTime =
+          Date.now() + config.duration_minutes * 60 * 1000;
+
+        // Update persisted state with targetTime
+        const savedState = JSON.parse(
+          localStorage.getItem("jambex_game_state") || "{}"
+        );
+        savedState.config = this.config;
+        localStorage.setItem("jambex_game_state", JSON.stringify(savedState));
+      }
+
+      this.startTimer();
+      const finishBtn = document.getElementById("finish-game-btn");
+      finishBtn.style.display = "flex";
+      finishBtn.innerHTML = `<i class="fas fa-check-circle"></i> Submit`; // Change text for exam
     } else {
       document.getElementById("game-timer").style.display = "none";
-      this.totalQuestions = Infinity; // Unlimited for practice
-      document.getElementById("finish-game-btn").style.display = "flex";
+      const finishBtn = document.getElementById("finish-game-btn");
+      finishBtn.style.display = "flex";
+      finishBtn.innerHTML = `<i class="fas fa-flag-checkered"></i> Finish`;
     }
 
     this.fetchQuestion(config.subject);
@@ -311,13 +328,26 @@ class QuestionManager {
     }
   }
 
-  startTimer(durationSeconds) {
-    let timeLeft = durationSeconds;
+  startTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval); // Safety clear
+
+    const targetTimestamp = this.config.targetTime;
     const timerEl = document.getElementById("game-timer");
 
-    this.timerInterval = setInterval(() => {
+    // Immediate update
+    const update = () => {
+      const now = Date.now();
+      const timeLeft = Math.round((targetTimestamp - now) / 1000);
+
       if (!this.isGameActive) {
-        clearInterval(this.timerInterval);
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        return;
+      }
+
+      if (timeLeft <= 0) {
+        timerEl.innerText = "00:00";
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.endGame(true, "Time's Up!");
         return;
       }
 
@@ -331,14 +361,15 @@ class QuestionManager {
       if (timeLeft < 60) {
         timerEl.style.backgroundColor = "#fee2e2";
         timerEl.style.color = "#dc2626";
+      } else {
+        // Reset if added time (optional feature) or reload
+        timerEl.style.backgroundColor = "";
+        timerEl.style.color = "";
       }
+    };
 
-      if (timeLeft <= 0) {
-        clearInterval(this.timerInterval);
-        this.endGame(true, "Time's Up!");
-      }
-      timeLeft--;
-    }, 1000);
+    update(); // Run once immediately
+    this.timerInterval = setInterval(update, 1000);
   }
 
   endGame(finished = true, message = "Session Ended") {
@@ -465,6 +496,11 @@ class QuestionManager {
   }
 
   showLoading() {
+    if (this.mode === "exam" && this.timerInterval) {
+      clearInterval(this.timerInterval); // Visual Pause during load
+    }
+
+    this.loadingStartTime = Date.now(); // Track when loading started
     const loadingId = "loading-" + Date.now();
     this.chatArea.innerHTML += `
       <div class="ai-message loading-message" id="${loadingId}">
@@ -476,6 +512,34 @@ class QuestionManager {
   }
 
   hideLoading() {
+    // 1. Refund Time
+    if (
+      this.loadingStartTime &&
+      this.mode === "exam" &&
+      this.config.targetTime
+    ) {
+      const elapsed = Date.now() - this.loadingStartTime;
+      // Add elapsed loading time to the target deadline
+      this.config.targetTime += elapsed;
+
+      // Persist the new adjusted time
+      const savedState = JSON.parse(
+        localStorage.getItem("jambex_game_state") || "{}"
+      );
+      if (savedState.config) {
+        savedState.config.targetTime = this.config.targetTime;
+        localStorage.setItem("jambex_game_state", JSON.stringify(savedState));
+      }
+
+      console.log(
+        `[Timer] Refunded ${Math.round(elapsed / 1000)}s for loading.`
+      );
+      this.loadingStartTime = null;
+
+      // Resume Timer visually
+      this.startTimer();
+    }
+
     if (this.currentLoadingId) {
       const el = document.getElementById(this.currentLoadingId);
       if (el) el.remove();
