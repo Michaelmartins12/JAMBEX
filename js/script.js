@@ -170,12 +170,7 @@ window.startGame = function () {
     subject: subject,
     topic: null,
     count: parseInt(count),
-    duration_minutes:
-      parseInt(count) === 5
-        ? 3
-        : parseInt(count) === 10
-        ? 5
-        : parseInt(count) * 0.5,
+    duration_minutes: Math.ceil(parseInt(count) * 0.675), // JAMB Standard: ~40s per question (27 mins for 40)
   };
 
   // Persist Game State
