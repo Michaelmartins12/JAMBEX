@@ -13,7 +13,6 @@ function handleAction(action) {
   selectedAction = action;
 
   if (action === "notes" || action === "ask") {
-    // Show Coming Soon Toast
     window.showToast?.(
       "Coming Soon! This feature is under development.",
       "info"
@@ -22,32 +21,35 @@ function handleAction(action) {
   }
 
   if (action === "questions") {
-    // Clear welcome message
     chatArea.innerHTML = "";
 
-    // Show Mode Header
     const modeHeader = document.getElementById("mode-header");
     const modeTitle = document.getElementById("mode-title");
     modeHeader.style.display = "flex";
     modeTitle.innerText = "Past Questions";
 
-    // Reveal subject dropdowns
     document.getElementById("subject-box").style.display = "flex";
-
-    // Hide welcome buttons
     document.getElementById("welcome-actions").style.display = "none";
+
+    // Reset Game UI
+    document.getElementById("game-options").style.display = "none";
+    document.getElementById("game-timer").style.display = "none";
+    document.getElementById("live-score").style.display = "none";
   }
 }
 window.handleAction = handleAction;
 
-// Back Button Logic
 document.getElementById("back-to-menu-btn").addEventListener("click", () => {
-  // Reset UI
   document.getElementById("mode-header").style.display = "none";
   document.getElementById("subject-box").style.display = "none";
+  document.getElementById("game-options").style.display = "none";
   document.getElementById("welcome-actions").style.display = "flex";
 
-  // Restore Welcome Message
+  // Stop any running game
+  if (window.questionManager && window.questionManager.endGame) {
+    window.questionManager.endGame(false);
+  }
+
   chatArea.innerHTML = `
       <div class="ai-message">
         <p><strong>Welcome to JambeX 👋</strong></p>
@@ -56,10 +58,7 @@ document.getElementById("back-to-menu-btn").addEventListener("click", () => {
       </div>
     `;
 
-  // Reset state
   selectedAction = null;
-
-  // Reset dropdowns if needed (optional)
   document.getElementById("subjects").value = "";
   document.getElementById("topic").disabled = true;
   document.getElementById("topic").value = "";
@@ -69,32 +68,51 @@ document.getElementById("back-to-menu-btn").addEventListener("click", () => {
 });
 
 function onSubtopicSelected() {
-  if (selectedAction === "notes") {
-    chatArea.innerHTML += `<div class="ai-message">Here are your notes 📘</div>`;
-  }
-
-  if (selectedAction === "questions") {
-    chatArea.innerHTML += `<div class="ai-message">Let’s practice past questions 📝</div>`;
-  }
-
-  if (selectedAction === "ask") {
-    chatArea.innerHTML += `<div class="ai-message">You can now ask any question 💬</div>`;
-  }
+  // Logic moved to startGame
 }
 
 const subjectDropDown = document.getElementById("subjects");
 subjectDropDown.addEventListener("change", function () {
-  // If we are in "questions" mode, fetch a question immediately
-  if (selectedAction === "questions") {
-    const subject = this.value;
-    if (subject) {
-      questionManager.fetchQuestion(subject);
-    }
-  }
-
   // reveal topic dropdown
   document.getElementById("topic").disabled = false;
 });
+
+// UI Helper: Toggle Exam Settings
+window.handleModeChange = function () {
+  const mode = document.querySelector('input[name="gameMode"]:checked').value;
+  const settings = document.getElementById("exam-settings");
+  settings.style.display = mode === "exam" ? "flex" : "none";
+};
+
+// UI Helper: Start Game
+window.startGame = function () {
+  const subject = document.getElementById("subjects").value;
+  const topic = document.getElementById("topic").value;
+
+  if (!subject || !topic) {
+    window.showToast?.("Please select a subject and topic first.", "error");
+    return;
+  }
+
+  const mode = document.querySelector('input[name="gameMode"]:checked').value;
+  const count = document.getElementById("question-count").value;
+
+  // Hide Options
+  document.getElementById("game-options").style.display = "none";
+
+  // Initialize Game
+  questionManager.startGame(mode, {
+    subject: subject,
+    topic: topic,
+    count: parseInt(count),
+    duration_minutes:
+      parseInt(count) === 5
+        ? 3
+        : parseInt(count) === 10
+        ? 5
+        : parseInt(count) * 0.5,
+  });
+};
 
 // Dynamic Subtopic options based on selected Topic
 const subtopics = {
@@ -167,5 +185,14 @@ topicDropdown.addEventListener("change", function () {
     subtopicDropdown.disabled = false;
   } else {
     subtopicDropdown.disabled = true;
+  }
+
+  // Show Game Options Panel if in questions mode
+  if (selectedAction === "questions") {
+    document.getElementById("game-options").style.display = "flex";
+    document.getElementById("subject-box").style.display = "none"; // Hide inputs for cleaner UI
+
+    // Update header title
+    document.getElementById("mode-title").innerText = selectedTopic;
   }
 });

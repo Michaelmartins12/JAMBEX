@@ -57,10 +57,77 @@
     <div class="chat-container">
       <!-- MODE HEADER (Hidden by default) -->
       <div id="mode-header" class="mode-header" style="display: none">
-        <button id="back-to-menu-btn" class="back-btn">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <h3 id="mode-title">Mode Name</h3>
+        <div class="header-left">
+          <button id="back-to-menu-btn" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <h3 id="mode-title">Mode Name</h3>
+        </div>
+        <div class="header-stats">
+          <span id="game-timer" class="stat-badge timer" style="display: none"
+            >00:00</span
+          >
+          <span id="live-score" class="stat-badge score" style="display: none"
+            >Score: 0</span
+          >
+        </div>
+      </div>
+
+      <!-- GAME OPTIONS PANEL (Hidden by default) -->
+      <div id="game-options" class="game-options-panel" style="display: none">
+        <div class="ai-message">
+          <h3><i class="fas fa-gamepad"></i> Choose Mode</h3>
+          <p>Select how you want to practice.</p>
+
+          <div class="mode-selection">
+            <label class="mode-card">
+              <input
+                type="radio"
+                name="gameMode"
+                value="practice"
+                checked
+                onchange="handleModeChange()"
+              />
+              <div class="card-content">
+                <i class="fas fa-infinity"></i>
+                <div class="text">
+                  <h4>Practice Run</h4>
+                  <small>Non-stop questions. Immediate feedback.</small>
+                </div>
+              </div>
+            </label>
+
+            <label class="mode-card">
+              <input
+                type="radio"
+                name="gameMode"
+                value="exam"
+                onchange="handleModeChange()"
+              />
+              <div class="card-content">
+                <i class="fas fa-stopwatch"></i>
+                <div class="text">
+                  <h4>Timed Exam</h4>
+                  <small>Race against time. Score at the end.</small>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <div id="exam-settings" class="exam-settings" style="display: none">
+            <label>Number of Questions:</label>
+            <select id="question-count">
+              <option value="5">5 Questions (3 Mins)</option>
+              <option value="10">10 Questions (5 Mins)</option>
+              <option value="20">20 Questions (10 Mins)</option>
+              <option value="40">40 Questions (20 Mins)</option>
+            </select>
+          </div>
+
+          <button class="start-game-btn" onclick="startGame()">
+            Start Practice
+          </button>
+        </div>
       </div>
 
       <!-- CHAT AREA -->
