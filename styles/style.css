@@ -503,6 +503,8 @@ body {
 .footer {
   display: flex;
   width: 100%;
+  position: fixed;
+  bottom: 5px;
   padding: 16px 24px;
   background: #ffffff; /* Contrast against gray bg */
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
