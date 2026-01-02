@@ -439,7 +439,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Kept aligned left as per original feel */
-  margin-bottom: 120px; /* Push to right side */
+  margin-bottom: 220px; /* Push to right side */
   gap: 12px;
   padding: 15px 30px;
   border-radius: 12px;
