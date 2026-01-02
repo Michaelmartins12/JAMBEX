@@ -317,6 +317,42 @@ class QuestionManager {
 
     // Auto-scroll to solution
     solutionBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+    // Auto-Generate Explanation if missing
+    if (!this.currentQuestion.solution && this.currentQuestion.id) {
+      const solutionTextEl = solutionBox.querySelector(".solution-text");
+      solutionTextEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Asking Gemini AI...`;
+
+      fetch("http://localhost:3000/explain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: this.currentQuestion.question,
+          option: this.currentQuestion.option,
+          answer: this.currentQuestion.answer,
+          subject: this.config.subject,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.answer) {
+            // Format: Markdown to HTML (simple conversion)
+            let beauty = data.answer
+              .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+              .replace(/\n/g, "<br>");
+            solutionTextEl.innerHTML = beauty;
+            // Cache logic (Optional): save back to this.currentQuestion.solution
+            this.currentQuestion.solution = beauty;
+          } else {
+            solutionTextEl.innerText = "Could not generate explanation.";
+          }
+        })
+        .catch((err) => {
+          console.error("AI Fetch Error", err);
+          solutionTextEl.innerText =
+            "AI Server not active. Run 'node js/server.js'";
+        });
+    }
   }
 
   updateHeader() {
