@@ -427,7 +427,7 @@ body {
 .input-area-container {
   padding: 20px;
   border-top: 1px solid #f1f5f9;
-  background: white;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -472,10 +472,11 @@ body {
 /* Subject Selection Panel */
 .sub-markdown {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: fit-content;
   align-items: flex-start;
   gap: 12px;
+  margin-bottom: 290px;
   padding: 12px 24px;
   background: transparent;
 }
@@ -505,7 +506,7 @@ body {
   position: fixed;
   bottom: 5px;
   padding: 16px 24px;
-  background: #ffffff; /* Contrast against gray bg */
+  background: #f1f4f6; /* Contrast against gray bg */
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
 }
 
