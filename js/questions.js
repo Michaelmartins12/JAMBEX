@@ -15,6 +15,15 @@ class QuestionManager {
     this.timerInterval = null;
     this.isGameActive = false;
     this.currentLoadingId = null;
+
+    // Track seen questions to prevent repeats
+    try {
+      this.seenIds = new Set(
+        JSON.parse(localStorage.getItem("jambex_seen_ids")) || []
+      );
+    } catch (e) {
+      this.seenIds = new Set();
+    }
   }
 
   // Optimized Data Strategy: Local -> Firestore -> API
@@ -38,6 +47,8 @@ class QuestionManager {
 
     // 2. Check Firestore (Global Cache)
     let firestoreActive = false;
+    let candidates = [];
+
     try {
       if (!window.fs || !window.db) {
         console.warn("[Cache] Firestore not initialized yet. Skipping to API.");
@@ -50,27 +61,37 @@ class QuestionManager {
           window.fs.limit(50)
         );
         const querySnapshot = await window.fs.getDocs(q);
-        firestoreActive = true; // Mark as working
-
-        const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+        firestoreActive = true;
 
         if (!querySnapshot.empty) {
           console.log(`[Cache] Found ${querySnapshot.size} docs in Firestore.`);
-          let questions = [];
-          querySnapshot.forEach((doc) => questions.push(doc.data()));
+          querySnapshot.forEach((doc) => candidates.push(doc.data()));
 
-          // Randomize and Save to Local
-          questions = shuffle(questions);
-          const combined = [...localData, ...questions];
-          localStorage.setItem(LOCAL_KEY, JSON.stringify(combined));
-          return combined;
+          // Filter out SEEN questions
+          const originalSize = candidates.length;
+          candidates = candidates.filter((q) => !this.seenIds.has(q.id));
+          console.log(
+            `[Cache] Firestore: ${originalSize} raw -> ${candidates.length} fresh.`
+          );
+
+          if (candidates.length > 0) {
+            // We found fresh questions in Firestore!
+            const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+            candidates = shuffle(candidates);
+            const combined = [...localData, ...candidates];
+            localStorage.setItem(LOCAL_KEY, JSON.stringify(combined));
+            return combined;
+          }
+          console.log(
+            "[Cache] Firestore only had stale questions. Forcing API for fresh ones."
+          );
         } else {
           console.log("[Cache] Firestore returned empty.");
         }
       }
     } catch (e) {
       console.warn("[Cache] Firestore check failed (Rules/Network):", e);
-      firestoreActive = false; // Disable seeding
+      firestoreActive = false;
     }
 
     console.log("[Cache] Fetching from ALOC API...");
@@ -116,12 +137,17 @@ class QuestionManager {
       if (questions && questions.length > 0 && questions[0]) {
         console.log(`[Cache] Fetched ${questions.length} from API.`);
 
-        // Deduplicate against local data
-        const existingIds = new Set(localData.map((q) => q.id));
-        questions = questions.filter((q) => !existingIds.has(q.id));
+        // Deduplicate against local buffer AND seen history
+        const bufferIds = new Set(localData.map((q) => q.id));
+        questions = questions.filter(
+          (q) => !bufferIds.has(q.id) && !this.seenIds.has(q.id)
+        );
 
         if (questions.length === 0) {
-          console.log("[Cache] All fetched questions already exist locally.");
+          console.log(
+            "[Cache] All fetched questions are either buffered or already seen."
+          );
+          // Edge case: if we keep getting old stuff, we might want to return localData anyway
           return localData;
         }
 
@@ -354,6 +380,15 @@ class QuestionManager {
     // Increment seen count only when displaying
     this.questionCount++;
     this.currentQuestion = data;
+
+    // Mark as SEEN
+    if (data.id) {
+      this.seenIds.add(data.id);
+      localStorage.setItem(
+        "jambex_seen_ids",
+        JSON.stringify([...this.seenIds])
+      );
+    }
 
     // Check Exam Limit (before displaying? No, usually after answer, but here we enforce count)
     // Actually, exam limit is handled by timer or when answers reach count.
