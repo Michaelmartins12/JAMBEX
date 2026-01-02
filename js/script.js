@@ -12,6 +12,11 @@ let selectedAction = null;
 function handleAction(action) {
   selectedAction = action;
 
+  // Persist the action so we can restore it on refresh
+  if (action && action !== "notes" && action !== "ask") {
+    localStorage.setItem("jambex_current_action", action);
+  }
+
   if (action === "notes" || action === "ask") {
     window.showToast?.(
       "Coming Soon! This feature is under development.",
@@ -65,6 +70,52 @@ document.getElementById("back-to-menu-btn").addEventListener("click", () => {
   // Hide topics for cleaner UI
   document.getElementById("topic").style.display = "none";
   document.getElementById("subtopic").style.display = "none";
+
+  // Clear persisted state
+  localStorage.removeItem("jambex_current_action");
+  localStorage.removeItem("jambex_selected_subject");
+  localStorage.removeItem("jambex_game_state");
+});
+
+// Restore state on load
+window.addEventListener("DOMContentLoaded", () => {
+  const savedGameState = localStorage.getItem("jambex_game_state");
+  const savedSubject = localStorage.getItem("jambex_selected_subject");
+  const savedAction = localStorage.getItem("jambex_current_action");
+
+  if (savedGameState) {
+    // Priority 1: Restore Active Game
+    try {
+      const gameState = JSON.parse(savedGameState);
+      handleAction("questions");
+
+      // Wait a tick for UI to ready, then start
+      setTimeout(() => {
+        // Pre-fill subject dropdown for visual consistency
+        const subDrop = document.getElementById("subjects");
+        if (subDrop) subDrop.value = gameState.config.subject;
+
+        // Directly start game with saved config
+        questionManager.startGame(gameState.mode, gameState.config);
+      }, 100);
+    } catch (e) {
+      console.error("Failed to restore game state", e);
+      localStorage.removeItem("jambex_game_state");
+    }
+  } else if (savedSubject) {
+    // Priority 2: Restore Selected Subject
+    handleAction("questions");
+    const subDrop = document.getElementById("subjects");
+    if (subDrop) {
+      subDrop.value = savedSubject;
+      // Manually trigger change event to show options
+      const event = new Event("change");
+      subDrop.dispatchEvent(event);
+    }
+  } else if (savedAction) {
+    // Priority 3: Restore Navigation only
+    handleAction(savedAction);
+  }
 });
 
 function onSubtopicSelected() {
@@ -81,6 +132,8 @@ subjectDropDown.addEventListener("change", function () {
     const subject = this.value;
     if (subject) {
       document.getElementById("mode-title").innerText = subject;
+      // Persist Subject Selection
+      localStorage.setItem("jambex_selected_subject", subject);
     }
     return;
   }
@@ -113,7 +166,7 @@ window.startGame = function () {
   document.getElementById("game-options").style.display = "none";
 
   // Initialize Game
-  questionManager.startGame(mode, {
+  const gameConfig = {
     subject: subject,
     topic: null,
     count: parseInt(count),
@@ -123,7 +176,18 @@ window.startGame = function () {
         : parseInt(count) === 10
         ? 5
         : parseInt(count) * 0.5,
-  });
+  };
+
+  // Persist Game State
+  localStorage.setItem(
+    "jambex_game_state",
+    JSON.stringify({
+      mode: mode,
+      config: gameConfig,
+    })
+  );
+
+  questionManager.startGame(mode, gameConfig);
 };
 
 // Dynamic Subtopic options based on selected Topic

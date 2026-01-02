@@ -8,6 +8,12 @@ import {
   getFirestore,
   doc,
   getDoc,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  limit,
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 // Firebase Configuration
@@ -24,6 +30,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+window.db = db; // Make DB globally accessible
+window.fs = { collection, addDoc, getDocs, query, where, limit }; // Expose helpers
 
 // DOM Elements
 // DOM Elements

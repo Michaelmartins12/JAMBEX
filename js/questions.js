@@ -12,9 +12,182 @@ class QuestionManager {
     this.score = 0;
     this.totalQuestions = 0;
     this.questionCount = 0; // Questions answered/seen
-    this.prefetchedQuestion = null;
     this.timerInterval = null;
     this.isGameActive = false;
+    this.currentLoadingId = null;
+  }
+
+  // Optimized Data Strategy: Local -> Firestore -> API
+  async getQuestions(subject) {
+    console.log(`[Cache] Getting questions for: ${subject}`);
+    const LOCAL_KEY = `jambex_questions_${subject}`;
+
+    // 1. Check LocalStorage
+    let localData = [];
+    try {
+      localData = JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
+    } catch (e) {
+      console.warn("Local storage parse error", e);
+    }
+
+    // If we have a healthy buffer, use it
+    if (localData.length >= 2) {
+      console.log(`[Cache] Found ${localData.length} in LocalStorage.`);
+      return localData;
+    }
+
+    // 2. Check Firestore (Global Cache)
+    let firestoreActive = false;
+    try {
+      if (!window.fs || !window.db) {
+        console.warn("[Cache] Firestore not initialized yet. Skipping to API.");
+      } else {
+        console.log("[Cache] Checking Firestore...");
+        const qRef = window.fs.collection(window.db, "questions");
+        const q = window.fs.query(
+          qRef,
+          window.fs.where("subject", "==", subject),
+          window.fs.limit(50)
+        );
+        const querySnapshot = await window.fs.getDocs(q);
+        firestoreActive = true; // Mark as working
+
+        const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+
+        if (!querySnapshot.empty) {
+          console.log(`[Cache] Found ${querySnapshot.size} docs in Firestore.`);
+          let questions = [];
+          querySnapshot.forEach((doc) => questions.push(doc.data()));
+
+          // Randomize and Save to Local
+          questions = shuffle(questions);
+          const combined = [...localData, ...questions];
+          localStorage.setItem(LOCAL_KEY, JSON.stringify(combined));
+          return combined;
+        } else {
+          console.log("[Cache] Firestore returned empty.");
+        }
+      }
+    } catch (e) {
+      console.warn("[Cache] Firestore check failed (Rules/Network):", e);
+      firestoreActive = false; // Disable seeding
+    }
+
+    console.log("[Cache] Fetching from ALOC API...");
+    // 3. API (Fallback)
+    // Fetch 40 questions (ALOC Limit)
+    // Map subjects to API expected format
+    const subjectMap = {
+      Mathematics: "mathematics",
+      "English Language": "english",
+      Physics: "physics",
+      Chemistry: "chemistry",
+      Biology: "biology",
+      Commerce: "commerce",
+      Accounting: "accounting",
+      Economics: "economics",
+      Government: "government",
+      Geography: "geography",
+      "Christian Religious Knowledge": "crk",
+    };
+    const apiSubject = subjectMap[subject] || subject.toLowerCase();
+
+    try {
+      const url = `${ALOC_BASE_URL}?subject=${apiSubject}&limit=40`;
+      console.log(`[Cache] Fetching from URL: ${url}`);
+
+      const response = await fetch(url, {
+        headers: { AccessToken: ALOC_ACCESS_TOKEN },
+      });
+
+      console.log(`[Cache] API Status: ${response.status}`);
+
+      if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+      const resJson = await response.json();
+      console.log("[Cache] API Response:", resJson);
+
+      // Normalize: API might return object (1 question) or array (n questions)
+      let questions = Array.isArray(resJson.data)
+        ? resJson.data
+        : [resJson.data];
+
+      if (questions && questions.length > 0 && questions[0]) {
+        console.log(`[Cache] Fetched ${questions.length} from API.`);
+
+        // Seed Firestore asynchronously ONLY if active
+        if (firestoreActive && window.fs && window.db) {
+          console.log("Seeding Firestore...");
+          const qRef = window.fs.collection(window.db, "questions");
+          for (const q of questions) {
+            try {
+              const docData = {
+                subject: subject,
+                question: q.question,
+                option: q.option,
+                answer: q.answer,
+                image: q.image || "",
+                examyear: q.examyear,
+                examtype: q.examtype,
+                solution: q.solution || "",
+              };
+              // Fire and forget, don't await to avoid UI blocking
+              window.fs
+                .addDoc(qRef, docData)
+                .catch((e) => console.warn("Seed fail", e));
+            } catch (e) {
+              console.error("Error prep doc", e);
+            }
+          }
+        } else {
+          console.warn(
+            "[Cache] Skipping Firestore seeding (Permissions/Disabled)."
+          );
+        }
+
+        // Save to Local
+        const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+        questions = shuffle(questions);
+        // Combine with whatever little we had locally
+        const combined = [...localData, ...questions];
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(combined));
+        return combined;
+      }
+    } catch (error) {
+      console.error("[Cache] Critical Error in getQuestions:", error);
+      this.showError("Failed to load questions. Please check network.");
+    }
+    return localData; // Return whatever we have as fallback
+  }
+
+  async fetchQuestion(subject) {
+    if (this.currentLoadingId) return; // Prevent double load
+    this.showLoading();
+
+    try {
+      const questions = await this.getQuestions(subject);
+
+      if (questions && questions.length > 0) {
+        // Pop one question
+        const question = questions.pop();
+
+        // Update LocalStorage with the remaining set
+        localStorage.setItem(
+          `jambex_questions_${subject}`,
+          JSON.stringify(questions)
+        );
+
+        this.hideLoading();
+        this.displayQuestion(question);
+      } else {
+        this.hideLoading();
+        this.showError("No questions available. Try reloading.");
+      }
+    } catch (error) {
+      this.hideLoading();
+      this.showError("Something went wrong.");
+      console.error(error);
+    }
   }
 
   startGame(mode, config) {
@@ -23,7 +196,9 @@ class QuestionManager {
     this.score = 0;
     this.questionCount = 0;
     this.isGameActive = true;
-    this.prefetchedQuestion = null; // Clear old buffer
+
+    // Clear old single-prefetch buffer if it exists
+    this.prefetchedQuestion = null;
 
     // Update UI for Game Start
     document.getElementById("live-score").style.display = "flex";
@@ -46,6 +221,59 @@ class QuestionManager {
     this.fetchQuestion(config.subject);
   }
 
+  checkAnswer(selectedKey, correctKey, questionContainerId) {
+    if (!this.isGameActive) return;
+
+    const container = document.getElementById(questionContainerId);
+    if (!container) return; // Already handled
+
+    const btns = container.querySelectorAll(".option-btn");
+    const nextBtn = container.querySelector(".next-btn");
+    const solutionBox = container.querySelector(".solution-box");
+
+    let isCorrect = selectedKey.toLowerCase() === correctKey.toLowerCase();
+
+    // Highlight Answers
+    btns.forEach((btn) => {
+      btn.disabled = true; // Disable all
+      const optKey = btn.getAttribute("data-option");
+
+      if (optKey.toLowerCase() === correctKey.toLowerCase()) {
+        btn.classList.add("correct");
+        btn.innerHTML += ` <i class="fas fa-check-circle"></i>`;
+      } else if (
+        optKey.toLowerCase() === selectedKey.toLowerCase() &&
+        !isCorrect
+      ) {
+        btn.classList.add("wrong");
+        btn.innerHTML += ` <i class="fas fa-times-circle"></i>`;
+      }
+    });
+
+    if (isCorrect) {
+      this.score++;
+      // Celebrate?
+    }
+
+    this.updateHeader();
+
+    // Show Solution & Next Button
+    solutionBox.style.display = "block";
+    nextBtn.style.display = "inline-block";
+
+    // Auto-scroll to solution
+    solutionBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  updateHeader() {
+    const scoreEl = document.getElementById("live-score");
+    if (this.mode === "exam") {
+      scoreEl.innerText = `Score: ${this.score}/${this.questionCount}`;
+    } else {
+      scoreEl.innerText = `Score: ${this.score}`;
+    }
+  }
+
   startTimer(durationSeconds) {
     let timeLeft = durationSeconds;
     const timerEl = document.getElementById("game-timer");
@@ -62,6 +290,12 @@ class QuestionManager {
       const s = (timeLeft % 60).toString().padStart(2, "0");
       timerEl.innerText = `${m}:${s}`;
 
+      // Warning color
+      if (timeLeft < 60) {
+        timerEl.style.backgroundColor = "#fee2e2";
+        timerEl.style.color = "#dc2626";
+      }
+
       if (timeLeft <= 0) {
         clearInterval(this.timerInterval);
         this.endGame(true, "Time's Up!");
@@ -70,116 +304,49 @@ class QuestionManager {
     }, 1000);
   }
 
-  updateHeader() {
-    const scoreEl = document.getElementById("live-score");
-    if (this.mode === "exam") {
-      scoreEl.innerText = `Score: ${this.score}/${this.questionCount}`;
-    } else {
-      scoreEl.innerText = `Score: ${this.score}`;
-    }
-  }
+  endGame(finished = true, message = "Session Ended") {
+    this.isGameActive = false;
+    if (this.timerInterval) clearInterval(this.timerInterval);
 
-  async fetchQuestion(subject) {
-    // 1. Use Prefetched Question if available
-    if (this.prefetchedQuestion) {
-      const data = this.prefetchedQuestion;
-      this.prefetchedQuestion = null; // Consume it
-      this.displayQuestion(data);
+    // Clear persisted game state
+    localStorage.removeItem("jambex_game_state");
 
-      // Background fetch next one
-      this.prefetchNext(subject);
-      return;
-    }
+    // Calculate accuracy if questions were answered
+    const percentage =
+      this.questionCount > 0
+        ? Math.round((this.score / this.questionCount) * 100)
+        : 0;
 
-    // 2. Normal Fetch (First load or cache miss)
-    try {
-      this.showLoading();
-      const data = await this._fetchFromApi(subject);
-      this.hideLoading();
+    // For Exam, show total questions. For practice, show answered.
+    const totalDivisor =
+      this.mode === "exam" ? this.config.count : this.questionCount;
 
-      if (data) {
-        this.displayQuestion(data);
-        // Background fetch next one
-        this.prefetchNext(subject);
-      } else {
-        this.showError("Couldn't fetch a question. Please try again.");
-      }
-    } catch (error) {
-      this.hideLoading();
-      console.error("Error fetching question:", error);
-      this.showError("Network error. Please check your connection.");
-    }
-  }
+    const summaryHtml = `
+        <div class="ai-message" style="text-align: center; padding: 30px;">
+            <h2>${message}</h2>
+            <div style="font-size: 3rem; font-weight: 800; color: dodgerblue; margin: 20px 0;">
+                ${this.score} / ${totalDivisor}
+            </div>
+            <p>Accuracy: <strong>${percentage}%</strong></p>
+            <button class="start-game-btn" onclick="document.getElementById('back-to-menu-btn').click()">
+                Back to Menu
+            </button>
+        </div>
+      `;
 
-  async prefetchNext(subject) {
-    try {
-      const data = await this._fetchFromApi(subject);
-      if (data) this.prefetchedQuestion = data;
-    } catch (e) {
-      console.warn("Prefetch failed:", e);
-    }
-  }
-
-  async _fetchFromApi(subject) {
-    const subjectMap = {
-      Mathematics: "mathematics",
-      "English Language": "english",
-      Physics: "physics",
-      Chemistry: "chemistry",
-      Biology: "biology",
-      Commerce: "commerce",
-      Accounting: "accounting",
-      Economics: "economics",
-      Government: "government",
-      Geography: "geography",
-      "Christian Religious Knowledge": "crk",
-    };
-    const apiSubject = subjectMap[subject] || subject.toLowerCase();
-
-    const response = await fetch(`${ALOC_BASE_URL}?subject=${apiSubject}`, {
-      headers: { AccessToken: ALOC_ACCESS_TOKEN },
-    });
-    const result = await response.json();
-    return result.status === 200 ? result.data : null;
-  }
-
-  showLoading() {
-    const loadingId = "loading-" + Date.now();
-    this.chatArea.innerHTML += `
-      <div id="${loadingId}" class="ai-message loading-message">
-        <i class="fas fa-spinner fa-spin"></i> Loading...
-      </div>
-    `;
-    this.chatArea.scrollTop = this.chatArea.scrollHeight;
-    this.currentLoadingId = loadingId;
-  }
-
-  hideLoading() {
-    if (this.currentLoadingId) {
-      const el = document.getElementById(this.currentLoadingId);
-      if (el) el.remove();
-      this.currentLoadingId = null;
-    }
-  }
-
-  showError(msg) {
-    this.chatArea.innerHTML += `
-      <div class="ai-message error-message">
-        <i class="fas fa-exclamation-triangle"></i> ${msg}
-      </div>
-    `;
-    this.chatArea.scrollTop = this.chatArea.scrollHeight;
+    this.chatArea.innerHTML = summaryHtml;
+    document.getElementById("mode-header").style.display = "none";
+    document.getElementById("finish-game-btn").style.display = "none";
   }
 
   displayQuestion(data) {
-    this.currentQuestion = data;
+    // Increment seen count only when displaying
     this.questionCount++;
+    this.currentQuestion = data;
 
-    // Check Exam Limit
-    if (this.mode === "exam" && this.questionCount > this.config.count) {
-      this.endGame(true, "Exam Completed!");
-      return;
-    }
+    // Check Exam Limit (before displaying? No, usually after answer, but here we enforce count)
+    // Actually, exam limit is handled by timer or when answers reach count.
+    // Let's just track index.
 
     this.updateHeader();
 
@@ -195,16 +362,14 @@ class QuestionManager {
       q.classList.add("history-hidden");
     });
 
-    // Create unique ID for this question block to handle events
+    // Create unique ID for this question block
     const questionId = "q-" + Date.now();
 
     let optionsHtml = "";
     const options = data.option;
 
-    // Normalize options keys (a,b,c,d / A,B,C,D)
     for (const [key, value] of Object.entries(options)) {
       if (value) {
-        // Only show non-null options
         optionsHtml += `
           <button class="option-btn" onclick="questionManager.checkAnswer('${key}', '${
           data.answer
@@ -224,7 +389,9 @@ class QuestionManager {
       <div class="ai-message question-container" id="${questionId}">
         <div class="question-meta">
           <span class="badge year">${data.examyear}</span>
-          <span class="badge type">${data.examtype.toUpperCase()}</span>
+          <span class="badge type">${
+            data.examtype ? data.examtype.toUpperCase() : "JAMB"
+          }</span>
         </div>
         <div class="question-text">
           ${data.question}
@@ -251,84 +418,35 @@ class QuestionManager {
     this.chatArea.scrollTop = this.chatArea.scrollHeight;
   }
 
-  checkAnswer(selectedKey, correctKey, questionContainerId) {
-    const container = document.getElementById(questionContainerId);
-    if (!container || container.classList.contains("answered")) return; // Prevent multiple answers
-
-    container.classList.add("answered");
-    const buttons = container.querySelectorAll(".option-btn");
-    const solutionBox = container.querySelector(".solution-box");
-    const nextBtn = container.querySelector(".next-btn");
-
-    // Normalize keys for comparison
-    const isCorrect = selectedKey.toLowerCase() === correctKey.toLowerCase();
-
-    // Update Score
-    if (isCorrect) this.score++;
-    this.updateHeader();
-
-    buttons.forEach((btn) => {
-      const btnKey = btn.getAttribute("data-option").toLowerCase();
-      // Disable all buttons
-      btn.disabled = true;
-
-      if (btnKey === correctKey.toLowerCase()) {
-        btn.classList.add("correct"); // Always highlight correct answer
-      }
-
-      if (btnKey === selectedKey.toLowerCase() && !isCorrect) {
-        btn.classList.add("wrong"); // Highlight wrong selection
-      }
-    });
-
-    // Show solution
-    if (solutionBox) {
-      solutionBox.style.display = "block";
-    }
-
-    // Show next button
-    if (nextBtn) nextBtn.style.display = "inline-block";
-
-    // Scroll to bottom to show feedback
+  showLoading() {
+    const loadingId = "loading-" + Date.now();
+    this.chatArea.innerHTML += `
+      <div class="ai-message loading-message" id="${loadingId}">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div>
+    `;
     this.chatArea.scrollTop = this.chatArea.scrollHeight;
+    this.currentLoadingId = loadingId;
   }
 
-  endGame(finished = true, message = "Session Ended") {
-    this.isGameActive = false;
-    if (this.timerInterval) clearInterval(this.timerInterval);
-
-    if (!finished) {
-      // Silent exit (user clicked back)
-      return;
+  hideLoading() {
+    if (this.currentLoadingId) {
+      const el = document.getElementById(this.currentLoadingId);
+      if (el) el.remove();
+      this.currentLoadingId = null;
     }
+  }
 
-    const percentage =
-      this.questionCount > 0
-        ? Math.round((this.score / this.questionCount) * 100)
-        : 0;
-
-    const summaryHtml = `
-        <div class="ai-message" style="text-align: center; padding: 30px;">
-            <h2>${message}</h2>
-            <div style="font-size: 3rem; font-weight: 800; color: dodgerblue; margin: 20px 0;">
-                ${this.score} / ${
-      this.questionCount <= this.config.count
-        ? this.questionCount - 1
-        : this.config.count
-    }
-            </div>
-            <p>Accuracy: <strong>${percentage}%</strong></p>
-            <button class="start-game-btn" onclick="document.getElementById('back-to-menu-btn').click()">
-                Back to Menu
-            </button>
-        </div>
-      `;
-
-    this.chatArea.innerHTML = summaryHtml;
-    document.getElementById("mode-header").style.display = "none";
-    document.getElementById("finish-game-btn").style.display = "none";
+  showError(msg) {
+    this.chatArea.innerHTML += `
+      <div class="ai-message error-message">
+        <i class="fas fa-exclamation-triangle"></i> ${msg}
+      </div>
+    `;
+    this.chatArea.scrollTop = this.chatArea.scrollHeight;
   }
 }
 
 // Initialize global instance
 const questionManager = new QuestionManager();
+window.questionManager = questionManager; // Ensure global access
