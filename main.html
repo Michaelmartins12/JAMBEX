@@ -64,6 +64,14 @@
           <h3 id="mode-title">Mode Name</h3>
         </div>
         <div class="header-stats">
+          <button
+            id="finish-game-btn"
+            class="finish-game-btn"
+            style="display: none"
+            onclick="questionManager.endGame(true, 'Session Finished')"
+          >
+            <i class="fas fa-flag-checkered"></i> Finish
+          </button>
           <span id="game-timer" class="stat-badge timer" style="display: none"
             >00:00</span
           >

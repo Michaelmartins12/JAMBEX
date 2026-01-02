@@ -36,9 +36,11 @@ class QuestionManager {
       document.getElementById("game-timer").style.display = "flex";
       this.startTimer(config.duration_minutes * 60);
       this.totalQuestions = config.count;
+      document.getElementById("finish-game-btn").style.display = "none";
     } else {
       document.getElementById("game-timer").style.display = "none";
       this.totalQuestions = Infinity; // Unlimited for practice
+      document.getElementById("finish-game-btn").style.display = "flex";
     }
 
     this.fetchQuestion(config.subject);
@@ -324,6 +326,7 @@ class QuestionManager {
 
     this.chatArea.innerHTML = summaryHtml;
     document.getElementById("mode-header").style.display = "none";
+    document.getElementById("finish-game-btn").style.display = "none";
   }
 }
 

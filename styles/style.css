@@ -347,6 +347,26 @@ body {
   color: #059669;
 }
 
+.finish-game-btn {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #ffedd5;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.finish-game-btn:hover {
+  background: #ffedd5;
+  transform: translateY(-1px);
+}
+
 .mode-header h3 {
   font-size: 1.1rem;
   font-weight: 600;

@@ -35,6 +35,7 @@ function handleAction(action) {
     document.getElementById("game-options").style.display = "none";
     document.getElementById("game-timer").style.display = "none";
     document.getElementById("live-score").style.display = "none";
+    document.getElementById("finish-game-btn").style.display = "none";
   }
 }
 window.handleAction = handleAction;
@@ -60,11 +61,10 @@ document.getElementById("back-to-menu-btn").addEventListener("click", () => {
 
   selectedAction = null;
   document.getElementById("subjects").value = "";
-  document.getElementById("topic").disabled = true;
-  document.getElementById("topic").value = "";
-  document.getElementById("subtopic").disabled = true;
-  document.getElementById("subtopic").innerHTML =
-    "<option>Select Subtopic</option>";
+
+  // Hide topics for cleaner UI
+  document.getElementById("topic").style.display = "none";
+  document.getElementById("subtopic").style.display = "none";
 });
 
 function onSubtopicSelected() {
@@ -73,7 +73,20 @@ function onSubtopicSelected() {
 
 const subjectDropDown = document.getElementById("subjects");
 subjectDropDown.addEventListener("change", function () {
-  // reveal topic dropdown
+  // If in "questions" mode, show options immediately
+  if (selectedAction === "questions") {
+    document.getElementById("game-options").style.display = "flex";
+    document.getElementById("subject-box").style.display = "none";
+
+    const subject = this.value;
+    if (subject) {
+      document.getElementById("mode-title").innerText = subject;
+    }
+    return;
+  }
+
+  // reveal topic dropdown for other modes
+  document.getElementById("topic").style.display = "block";
   document.getElementById("topic").disabled = false;
 });
 
@@ -87,10 +100,9 @@ window.handleModeChange = function () {
 // UI Helper: Start Game
 window.startGame = function () {
   const subject = document.getElementById("subjects").value;
-  const topic = document.getElementById("topic").value;
 
-  if (!subject || !topic) {
-    window.showToast?.("Please select a subject and topic first.", "error");
+  if (!subject) {
+    window.showToast?.("Please select a subject first.", "error");
     return;
   }
 
@@ -103,7 +115,7 @@ window.startGame = function () {
   // Initialize Game
   questionManager.startGame(mode, {
     subject: subject,
-    topic: topic,
+    topic: null,
     count: parseInt(count),
     duration_minutes:
       parseInt(count) === 5
